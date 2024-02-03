@@ -21,19 +21,21 @@ public class BookService {
     @Autowired
     private Misc misc;
 
-    private ExecutorService es = Executors.newFixedThreadPool(10);
+    private final ExecutorService es = Executors.newFixedThreadPool(10);
 
     public void createBooks() {
+        log.info("Inside CreateBooks");
         Book book1 = new Book("Book 1", "Author 1");
         bookRepository.save(book1);
+        log.info("Book saved: {}", book1.getId());
         es.submit( () ->{
             try{
-                log.info("Book saved: {}", book1.getId());
+                log.info("Inside submit");
                 misc.someMethod(book1);
             }catch (Exception e){
-                log.info("catch block");
+                log.info("Entering catch block");
                 bookRepository.updateTitleById(book1.getId(), "Book 2");
-                log.info("catch block saved");
+                log.info("Exiting catch block");
             }
         });
     }
